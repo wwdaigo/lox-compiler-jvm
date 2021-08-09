@@ -5,7 +5,6 @@ import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
 import kotlin.system.exitProcess
 
 private var hadError = false
@@ -43,7 +42,7 @@ private fun rumPrompt() {
 
 private fun run(source: String) {
 	val scanner = Scanner(source)
-	scanner.tokens().forEach {
+	scanner.scanTokens().forEach() {
 		println(it)
 	}
 }
