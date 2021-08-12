@@ -8,6 +8,9 @@ import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 private var hadError = false
+private var hadRuntimeError = false
+
+private val interpreter = Interpreter()
 
 fun main(vararg args: String) {
 	when (args.size) {
@@ -25,6 +28,7 @@ private fun runFile(path: String) {
 	run(String(bytes, Charset.defaultCharset()))
 
 	if (hadError) exitProcess(65)
+	if (hadRuntimeError) exitProcess(70)
 }
 
 private fun rumPrompt() {
@@ -47,7 +51,7 @@ private fun run(source: String) {
 	val expression = parser.parse()
 
 	if (hadError) return
-	println(AstPrinter().print(expression!!))
+	interpreter.interpret(expression)
 }
 
 /* Error handling */
@@ -62,6 +66,11 @@ fun error(token: Token, message: String) {
 	} else {
 		report(token.line, " at '${token.lexeme}'", message)
 	}
+}
+
+fun runtimeError(error: RuntimeError) {
+	System.err.println("${error.message}\n[line ${error.token.line}]")
+	hadRuntimeError = true
 }
 
 private fun report(line: Int, where: String, message: String) {
